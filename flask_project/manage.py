@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return '<h1>Welcome to Flask Login App!</h1>'
+    return '<h1>Welcome to my Flask Login App for Week 10!</h1>'
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
