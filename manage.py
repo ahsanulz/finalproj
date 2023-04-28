@@ -1,17 +1,24 @@
-import sqlite3
+import mysql.connector
 from flask import Flask, render_template, request, redirect, url_for, flash
+from flask_bootstrap import Bootstrap
 
 app = Flask(__name__, template_folder='templates2')
+Bootstrap(app)
 app.secret_key = "secret key"
 
-conn = sqlite3.connect('employees.db')
+conn = mysql.connector.connect(
+    host='localhost',
+    user='flask',
+    password='Ambermolly#1',
+    database='flask'
+)
 c = conn.cursor()
 c.execute('''CREATE TABLE IF NOT EXISTS employees (
-        EMPID INTEGER PRIMARY KEY AUTOINCREMENT,
-        EMPName TEXT,
-        EMPGender TEXT,
-        EMPPhone TEXT,
-        EMPBdate DATE)''')
+        EMPID INT AUTO_INCREMENT PRIMARY KEY,
+        EMPName VARCHAR(255),
+        EMPGender VARCHAR(255),
+        EMPPhone VARCHAR(255),
+        EMPBdate VARCHAR(255))''')
 print("Table created")
 conn.close()
 
@@ -27,9 +34,14 @@ def registration():
         empphone = request.form['EMPPhone']
         empbdate = request.form['EMPBdate']
 
-        conn = sqlite3.connect('employees.db')
+        conn = mysql.connector.connect(
+		host='localhost',
+		user='flask',
+		password='Ambermolly#1',
+		database='flask'
+	)
         c = conn.cursor()
-        c.execute("INSERT INTO employees (EMPName, EMPGender, EMPPhone, EMPBdate) VALUES (?, ?, ?, ?)" , (empname, empgender, empphone, empbdate))
+        c.execute("INSERT INTO employees (EMPName, EMPGender, EMPPhone, EMPBdate) VALUES ('{0}', '{1}', '{2}', '{3}')".format(empname, empgender, empphone, empbdate))
         conn.commit()
         conn.close()
 
@@ -39,10 +51,16 @@ def registration():
 
 @app.route('/information')
 def information():
-    with sqlite3.connect('employees.db') as con:
-        cur = con.cursor()
-        cur.execute("SELECT * FROM employees")
-        rows = cur.fetchall()
+    conn = mysql.connector.connect(
+    	host='localhost',
+    	user='flask',
+    	password='Ambermolly#1',
+    	database='flask'
+    )
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM employees")
+    rows = cur.fetchall()
+    conn.close()
     return render_template('information.html', rows=rows)
 
 if __name__ == '__main__':
